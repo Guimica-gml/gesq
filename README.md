@@ -8,6 +8,7 @@ nesq's game of life
 - `Advance State`: when the simulation is paused it will advance to the next state of the board.
 - `Clear`: it will fill the board with dead cells.
 - Buttons under the `Patterns` tab: they don't work yet, but I plan on making them work as changing the "brush", so it's easier to add cool patterns to the simulation.
+- When the game is paused you can click in a cell to toggle its state between alive and dead.
 
 ## Build and run
 You will need [SDL2](https://www.libsdl.org/) and [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf) to build this code.
