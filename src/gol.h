@@ -1,5 +1,5 @@
-#ifndef GOL_H
-#define GOL_H
+#ifndef GOL_H_
+#define GOL_H_
 
 #include <stdlib.h>
 
@@ -18,4 +18,4 @@ int gol_alive_neighbor_count(Gol_Board *board, size_t x, size_t y);
 void gol_board_advance(Gol_Board *board);
 void gol_board_clear(Gol_Board *board);
 
-#endif // GOL_H
+#endif // GOL_H_
