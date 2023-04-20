@@ -10,22 +10,8 @@ int gol_alive_neighbor_count(Gol_Board *board, size_t x, size_t y) {
                 continue;
             }
 
-            int nx = x + dx;
-            int ny = y + dy;
-
-            if (nx > GOL_BOARD_DIM - 1) {
-                nx = 0;
-            }
-            if (nx < 0) {
-                nx = GOL_BOARD_DIM - 1;
-            }
-            if (ny > GOL_BOARD_DIM - 1) {
-                ny = 0;
-            }
-            if (ny < 0) {
-                ny = GOL_BOARD_DIM - 1;
-            }
-
+            int nx = (x + dx + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+            int ny = (y + dy + GOL_BOARD_DIM) % GOL_BOARD_DIM;
             neighbor_count += board->cells[ny][nx];
         }
     }
