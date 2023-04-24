@@ -98,7 +98,7 @@ int main(void) {
         exit(1);
     }
 
-    TTF_Font *font = TTF_OpenFont("font/iosevka.ttf", 20);
+    TTF_Font *font = TTF_OpenFont("./font/iosevka.ttf", 20);
 
     if (font == NULL) {
         fprintf(stderr, "SDL Error: could not open font: %s\n", TTF_GetError());
@@ -130,9 +130,9 @@ int main(void) {
         ui_new_button(&ui_alloc, UI_NO_POS, "Heavy Spaceship", NULL),
 
         ui_new_label(&ui_alloc, UI_NO_POS, "State"),
-        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Click to Resume", paused, &ui_pause_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Advance State", &ui_advance_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Clear", &ui_clear_button_pressed),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Click to Resume", paused, ui_pause_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Advance State", ui_advance_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Clear", ui_clear_button_pressed),
     };
     size_t ui_items_size = sizeof(ui_items) / sizeof(ui_items[0]);
     UI_Node_Index ui_root = ui_new_container(&ui_alloc, UI_X, UI_Y, UI_W, UI_H, 40, 10, UI_VERTICAL, ui_items, ui_items_size);
