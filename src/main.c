@@ -41,6 +41,8 @@
 
 #define CELL_SIZE (BOARD_SIZE / GOL_BOARD_DIM)
 
+#define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
+
 // State of the program
 Gol_Board board = { 0 };
 bool paused = true;
@@ -134,8 +136,8 @@ int main(void) {
         ui_new_button(&ui_alloc, UI_NO_POS, "Advance State", ui_advance_button_pressed),
         ui_new_button(&ui_alloc, UI_NO_POS, "Clear", ui_clear_button_pressed),
     };
-    size_t ui_items_size = sizeof(ui_items) / sizeof(ui_items[0]);
-    UI_Node_Index ui_root = ui_new_container(&ui_alloc, UI_X, UI_Y, UI_W, UI_H, 40, 10, UI_VERTICAL, ui_items, ui_items_size);
+
+    UI_Node_Index ui_root = ui_new_container(&ui_alloc, UI_X, UI_Y, UI_W, UI_H, 40, 10, UI_VERTICAL, ui_items, ARRAY_LEN(ui_items));
 
     // Delta time
     Uint64 now = SDL_GetPerformanceCounter();
