@@ -129,11 +129,7 @@ void ui_render_node(SDL_Renderer *renderer, UI_Theme *theme, UI_Alloc *alloc, UI
 
 UI_Node_Index ui_alloc_node(UI_Alloc *alloc, UI_Node node) {
     if (alloc->size >= alloc->capacity) {
-        if (alloc->capacity == 0) {
-            alloc->capacity = sizeof(UI_Node);
-        } else {
-            alloc->capacity *= 2;
-        }
+        alloc->capacity = (alloc->capacity == 0) ? sizeof(UI_Node) : alloc->capacity * 2;
         alloc->nodes = realloc(alloc->nodes, alloc->capacity * sizeof(UI_Node));
         if (alloc->nodes == NULL) {
             fprintf(stderr, "Error: not enough memory, buy more ram\n");
