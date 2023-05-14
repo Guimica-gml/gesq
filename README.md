@@ -7,7 +7,7 @@ nesq's game of life
 - `Click to Resume/Click to Pause`: you can use to pause and unpause the simulation.
 - `Advance State`: when the simulation is paused it will advance to the next state of the board.
 - `Clear`: it will fill the board with dead cells.
-- Buttons under the `Patterns` tab: they don't work yet, but I plan on making them work as changing the "brush", so it's easier to add cool patterns to the simulation.
+- Buttons under the `Patterns` tab: they work as changing the "brush", so you can add cool patterns to the simulation.
 - When the game is paused you can click in a cell to toggle its state between alive and dead.
 
 ## Build and run
