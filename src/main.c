@@ -6,11 +6,13 @@
 
 #include "./ui.h"
 #include "./gol.h"
+#include "./patterns.h"
 
 #define COLOR_BACKGROUND  0xBE, 0x93, 0xD4, 0xFF
 #define COLOR_DEAD        0xC8, 0xA2, 0xC8, 0xFF
 #define COLOR_LINE        0x78, 0x51, 0xA9, 0xFF
 #define COLOR_ALIVE       0xA0, 0x20, 0xF0, 0xFF
+#define COLOR_HOVER       0xA0, 0x20, 0xF0, 0x55
 #define COLOR_PATTERN_PREVIEW 0xA0, 0x20, 0xF0, 0xAA
 
 #define UI_COLOR_LINE        COLOR_LINE
@@ -43,8 +45,23 @@
 
 #define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
 
+typedef struct {
+    size_t width;
+    size_t height;
+    Gol_State *cells;
+} Gol_Pattern;
+
+void pattern_switch(Gol_Pattern *pattern, Gol_State *cells, size_t width, size_t height) {
+    pattern->width = width;
+    pattern->height = height;
+    pattern->cells = realloc(pattern->cells, width * height * sizeof(Gol_State));
+    memcpy(pattern->cells, cells, width * height * sizeof(Gol_State));
+}
+
 // State of the program
 Gol_Board board = { 0 };
+Gol_Pattern pattern = { 0 };
+
 bool paused = true;
 double update_timer = UPDATE_INTERVAL;
 
@@ -58,17 +75,47 @@ void ui_pause_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed)
     }
 }
 
-void ui_advance_button_pressed() {
+void ui_advance_button_pressed(void) {
     if (paused) {
         gol_board_advance(&board);
     }
 }
 
-void ui_clear_button_pressed() {
+void ui_clear_button_pressed(void) {
     gol_board_clear(&board);
 }
 
+void ui_pattern_none_button_pressed(void) {
+    pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+}
+
+void ui_pattern_glider_button_pressed(void) {
+    pattern_switch(&pattern, pattern_glider, PAT_GLIDER_W, PAT_GLIDER_H);
+}
+
+void ui_pattern_hammerhead_button_pressed(void) {
+    pattern_switch(&pattern, pattern_hammerhead, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H);
+}
+
+void ui_pattern_cloverleaf_button_pressed(void) {
+    pattern_switch(&pattern, pattern_cloverleaf, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H);
+}
+
+void ui_pattern_light_spaceship_button_pressed(void) {
+    pattern_switch(&pattern, pattern_light_spaceship, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H);
+}
+
+void ui_pattern_midlle_spaceship_button_pressed(void) {
+    pattern_switch(&pattern, pattern_middle_spaceship, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H);
+}
+
+void ui_pattern_heavy_spaceship_button_pressed(void) {
+    pattern_switch(&pattern, pattern_heavy_spaceship, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H);
+}
+
 int main(void) {
+    pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         fprintf(stderr, "SDL Error: could not initialize SDL2: %s\n", SDL_GetError());
         exit(1);
@@ -123,13 +170,13 @@ int main(void) {
 
     UI_Node_Index ui_items[] = {
         ui_new_label(&ui_alloc, UI_NO_POS, "Patterns"),
-        ui_new_button(&ui_alloc, UI_NO_POS, "None", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Glider", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Hammerhead", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Cloverleaf", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Light Spaceship", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Midlle Spaceship", NULL),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Heavy Spaceship", NULL),
+        ui_new_button(&ui_alloc, UI_NO_POS, "None", ui_pattern_none_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Glider", ui_pattern_glider_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Hammerhead", ui_pattern_hammerhead_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Cloverleaf", ui_pattern_cloverleaf_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Light Spaceship", ui_pattern_light_spaceship_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Midlle Spaceship", ui_pattern_midlle_spaceship_button_pressed),
+        ui_new_button(&ui_alloc, UI_NO_POS, "Heavy Spaceship", ui_pattern_heavy_spaceship_button_pressed),
 
         ui_new_label(&ui_alloc, UI_NO_POS, "State"),
         ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Click to Resume", paused, ui_pause_button_pressed),
@@ -159,10 +206,21 @@ int main(void) {
                 } break;
                 case SDL_MOUSEBUTTONDOWN: {
                     if (paused && event.button.button == SDL_BUTTON_LEFT) {
-                        int x = event.button.x / CELL_SIZE;
-                        int y = event.button.y / CELL_SIZE;
-                        if (x < GOL_BOARD_DIM && y < GOL_BOARD_DIM) {
-                            board.cells[y][x] = !board.cells[y][x];
+                        int cell_x = event.button.x / CELL_SIZE;
+                        int cell_y = event.button.y / CELL_SIZE;
+                        if (cell_x < GOL_BOARD_DIM && cell_y < GOL_BOARD_DIM) {
+                            for (size_t y = 0; y < pattern.height; ++y) {
+                                for (size_t x = 0; x < pattern.width; ++x) {
+                                    int bx = ((x + cell_x - pattern.width / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+                                    int by = ((y + cell_y - pattern.height / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+
+                                    if (pattern.cells[y * pattern.width + x] == STATE_DEAD) {
+                                        continue;
+                                    }
+
+                                    board.cells[by][bx] = !board.cells[by][bx];
+                                }
+                            }
                         }
                     }
                 } break;
@@ -188,6 +246,35 @@ int main(void) {
             .h = BOARD_SIZE,
         };
         SDL_RenderFillRect(renderer, &bg_rect);
+
+        int mouse_x = 0;
+        int mouse_y = 0;
+        SDL_GetMouseState(&mouse_x, &mouse_y);
+
+        int cell_x = mouse_x / CELL_SIZE;
+        int cell_y = mouse_y / CELL_SIZE;
+
+        SDL_SetRenderDrawColor(renderer, COLOR_HOVER);
+        if (paused && cell_x < GOL_BOARD_DIM && cell_y < GOL_BOARD_DIM) {
+            for (size_t y = 0; y < pattern.height; ++y) {
+                for (size_t x = 0; x < pattern.width; ++x) {
+                    int bx = ((x + cell_x - pattern.width / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+                    int by = ((y + cell_y - pattern.height / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+
+                    if (pattern.cells[y * pattern.width + x] == STATE_DEAD) {
+                        continue;
+                    }
+
+                    SDL_Rect rect = {
+                        .x = bx * CELL_SIZE,
+                        .y = by * CELL_SIZE,
+                        .w = CELL_SIZE,
+                        .h = CELL_SIZE,
+                    };
+                    SDL_RenderFillRect(renderer, &rect);
+                }
+            }
+        }
 
         SDL_SetRenderDrawColor(renderer, COLOR_ALIVE);
         for (size_t y = 0; y < GOL_BOARD_DIM; ++y) {
@@ -225,6 +312,7 @@ int main(void) {
     TTF_Quit();
     SDL_Quit();
     ui_alloc_free(&ui_alloc);
+    free(pattern.cells);
 
     return 0;
 }
