@@ -45,19 +45,6 @@
 
 #define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
 
-typedef struct {
-    size_t width;
-    size_t height;
-    Gol_State *cells;
-} Gol_Pattern;
-
-void pattern_switch(Gol_Pattern *pattern, Gol_State *cells, size_t width, size_t height) {
-    pattern->width = width;
-    pattern->height = height;
-    pattern->cells = realloc(pattern->cells, width * height * sizeof(Gol_State));
-    memcpy(pattern->cells, cells, width * height * sizeof(Gol_State));
-}
-
 // State of the program
 Gol_Board board = { 0 };
 Gol_Pattern pattern = { 0 };
@@ -86,35 +73,35 @@ void ui_clear_button_pressed(void) {
 }
 
 void ui_pattern_none_button_pressed(void) {
-    pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+    gol_pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
 }
 
 void ui_pattern_glider_button_pressed(void) {
-    pattern_switch(&pattern, pattern_glider, PAT_GLIDER_W, PAT_GLIDER_H);
+    gol_pattern_switch(&pattern, pattern_glider, PAT_GLIDER_W, PAT_GLIDER_H);
 }
 
 void ui_pattern_hammerhead_button_pressed(void) {
-    pattern_switch(&pattern, pattern_hammerhead, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H);
+    gol_pattern_switch(&pattern, pattern_hammerhead, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H);
 }
 
 void ui_pattern_cloverleaf_button_pressed(void) {
-    pattern_switch(&pattern, pattern_cloverleaf, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H);
+    gol_pattern_switch(&pattern, pattern_cloverleaf, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H);
 }
 
 void ui_pattern_light_spaceship_button_pressed(void) {
-    pattern_switch(&pattern, pattern_light_spaceship, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H);
+    gol_pattern_switch(&pattern, pattern_light_spaceship, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H);
 }
 
 void ui_pattern_midlle_spaceship_button_pressed(void) {
-    pattern_switch(&pattern, pattern_middle_spaceship, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H);
+    gol_pattern_switch(&pattern, pattern_middle_spaceship, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H);
 }
 
 void ui_pattern_heavy_spaceship_button_pressed(void) {
-    pattern_switch(&pattern, pattern_heavy_spaceship, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H);
+    gol_pattern_switch(&pattern, pattern_heavy_spaceship, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H);
 }
 
 int main(void) {
-    pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+    gol_pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         fprintf(stderr, "SDL Error: could not initialize SDL2: %s\n", SDL_GetError());

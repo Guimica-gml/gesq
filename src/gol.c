@@ -47,3 +47,10 @@ void gol_board_advance(Gol_Board *board) {
 void gol_board_clear(Gol_Board *board) {
     memset(board, STATE_DEAD, sizeof(Gol_Board));
 }
+
+void gol_pattern_switch(Gol_Pattern *pattern, Gol_State *cells, size_t width, size_t height) {
+    pattern->width = width;
+    pattern->height = height;
+    pattern->cells = realloc(pattern->cells, width * height * sizeof(Gol_State));
+    memcpy(pattern->cells, cells, width * height * sizeof(Gol_State));
+}
