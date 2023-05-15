@@ -41,15 +41,14 @@
 #define UI_W (WINDOW_WIDTH - UI_X)
 #define UI_H (WINDOW_HEIGHT - UI_Y)
 
-#define CELL_SIZE (BOARD_SIZE / GOL_BOARD_DIM)
+#define BOARD_DIM 25
+#define CELL_SIZE (BOARD_SIZE / BOARD_DIM)
 
 #define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
 
-#define GOL_BOARD_DIM 25
-
 // State of the program
 Gol_Board board = { 0 };
-Gol_Pattern pattern = { 0 };
+Gol_Board pattern = { 0 };
 
 bool paused = true;
 double update_timer = UPDATE_INTERVAL;
@@ -75,36 +74,36 @@ void ui_clear_button_pressed(void) {
 }
 
 void ui_pattern_none_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+    gol_board_resize(&pattern, PAT_DEFAULT_W, PAT_DEFAULT_W, pattern_default);
 }
 
 void ui_pattern_glider_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_glider, PAT_GLIDER_W, PAT_GLIDER_H);
+    gol_board_resize(&pattern, PAT_GLIDER_W, PAT_GLIDER_H, pattern_glider);
 }
 
 void ui_pattern_hammerhead_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_hammerhead, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H);
+    gol_board_resize(&pattern, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H, pattern_hammerhead);
 }
 
 void ui_pattern_cloverleaf_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_cloverleaf, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H);
+    gol_board_resize(&pattern, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H, pattern_cloverleaf);
 }
 
 void ui_pattern_light_spaceship_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_light_spaceship, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H);
+    gol_board_resize(&pattern, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H, pattern_light_spaceship);
 }
 
 void ui_pattern_midlle_spaceship_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_middle_spaceship, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H);
+    gol_board_resize(&pattern, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H, pattern_middle_spaceship);
 }
 
 void ui_pattern_heavy_spaceship_button_pressed(void) {
-    gol_pattern_switch(&pattern, pattern_heavy_spaceship, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H);
+    gol_board_resize(&pattern, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H, pattern_heavy_spaceship);
 }
 
 int main(void) {
-    board = gol_board_new(GOL_BOARD_DIM, GOL_BOARD_DIM);
-    gol_pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
+    board = gol_board_new(BOARD_DIM, BOARD_DIM);
+    gol_board_resize(&pattern, PAT_DEFAULT_W, PAT_DEFAULT_W, pattern_default);
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
         fprintf(stderr, "SDL Error: could not initialize SDL2: %s\n", SDL_GetError());
@@ -196,23 +195,9 @@ int main(void) {
                 } break;
                 case SDL_MOUSEBUTTONDOWN: {
                     if (paused && event.button.button == SDL_BUTTON_LEFT) {
-                        int cell_x = event.button.x / CELL_SIZE;
-                        int cell_y = event.button.y / CELL_SIZE;
-                        if (cell_x < GOL_BOARD_DIM && cell_y < GOL_BOARD_DIM) {
-                            for (size_t y = 0; y < pattern.height; ++y) {
-                                for (size_t x = 0; x < pattern.width; ++x) {
-                                    int bx = ((x + cell_x - pattern.width / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
-                                    int by = ((y + cell_y - pattern.height / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
-
-                                    if (pattern.cells[y * pattern.width + x] == STATE_DEAD) {
-                                        continue;
-                                    }
-
-                                    size_t index = by * board.width + bx;
-                                    board.cells[index] = !board.cells[index];
-                                }
-                            }
-                        }
+                        size_t cell_x = event.button.x / CELL_SIZE;
+                        size_t cell_y = event.button.y / CELL_SIZE;
+                        gol_board_copy(&board, cell_x, cell_y, &pattern);
                     }
                 } break;
             }
@@ -242,15 +227,15 @@ int main(void) {
         int mouse_y = 0;
         SDL_GetMouseState(&mouse_x, &mouse_y);
 
-        int cell_x = mouse_x / CELL_SIZE;
-        int cell_y = mouse_y / CELL_SIZE;
+        size_t cell_x = mouse_x / CELL_SIZE;
+        size_t cell_y = mouse_y / CELL_SIZE;
 
         SDL_SetRenderDrawColor(renderer, COLOR_HOVER);
-        if (paused && cell_x < GOL_BOARD_DIM && cell_y < GOL_BOARD_DIM) {
+        if (paused && cell_x < board.width && cell_y < board.height) {
             for (size_t y = 0; y < pattern.height; ++y) {
                 for (size_t x = 0; x < pattern.width; ++x) {
-                    int bx = ((x + cell_x - pattern.width / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
-                    int by = ((y + cell_y - pattern.height / 2) + GOL_BOARD_DIM) % GOL_BOARD_DIM;
+                    size_t bx = ((x + cell_x - pattern.width / 2) + board.width) % board.width;
+                    size_t by = ((y + cell_y - pattern.height / 2) + board.height) % board.height;
 
                     if (pattern.cells[y * pattern.width + x] == STATE_DEAD) {
                         continue;
@@ -268,8 +253,8 @@ int main(void) {
         }
 
         SDL_SetRenderDrawColor(renderer, COLOR_ALIVE);
-        for (size_t y = 0; y < GOL_BOARD_DIM; ++y) {
-            for (size_t x = 0; x < GOL_BOARD_DIM; ++x) {
+        for (size_t y = 0; y < board.height; ++y) {
+            for (size_t x = 0; x < board.width; ++x) {
                 if (board.cells[y * board.width + x] == STATE_DEAD) {
                     continue;
                 }
@@ -285,7 +270,7 @@ int main(void) {
         }
 
         SDL_SetRenderDrawColor(renderer, COLOR_LINE);
-        for (int i = 1; i < GOL_BOARD_DIM + 1; ++i) {
+        for (int i = 1; i < BOARD_DIM + 1; ++i) {
             int pos = i * CELL_SIZE;
             SDL_RenderDrawLine(renderer, pos, 0, pos, BOARD_SIZE);
             SDL_RenderDrawLine(renderer, 0, pos, BOARD_SIZE, pos);
@@ -305,7 +290,7 @@ int main(void) {
 
     ui_alloc_free(&ui_alloc);
     gol_board_free(&board);
-    free(pattern.cells);
+    gol_board_free(&pattern);
 
     return 0;
 }

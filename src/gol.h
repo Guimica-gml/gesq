@@ -14,17 +14,12 @@ typedef struct {
     Gol_State *cells;
 } Gol_Board;
 
-typedef struct {
-    size_t width;
-    size_t height;
-    Gol_State *cells;
-} Gol_Pattern;
-
 Gol_Board gol_board_new(size_t width, size_t height);
-int gol_alive_neighbor_count(Gol_Board *board, size_t x, size_t y);
+int gol_board_alive_neighbor_count(Gol_Board *board, size_t x, size_t y);
 void gol_board_advance(Gol_Board *board);
+void gol_board_resize(Gol_Board *board, size_t width, size_t height, Gol_State *cells);
+void gol_board_copy(Gol_Board *dst, size_t x, size_t y, Gol_Board *src);
 void gol_board_clear(Gol_Board *board);
 void gol_board_free(Gol_Board *board);
-void gol_pattern_switch(Gol_Pattern *pattern, Gol_State *cells, size_t width, size_t height);
 
 #endif // GOL_H_
