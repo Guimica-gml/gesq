@@ -52,7 +52,7 @@ void ui_update_node(UI_Alloc *alloc, UI_Node_Index node_index) {
                         }
                     }
                     if (toggle_button->when_pressed != NULL) {
-                        toggle_button->when_pressed(toggle_button, toggle_button->state == UI_BUTTON_PRESSED);
+                        toggle_button->when_pressed();
                     }
                 } else {
                     if (toggle_button->state != UI_BUTTON_PRESSED) {
@@ -246,7 +246,7 @@ UI_Node_Index ui_new_toggle_button(
     int x, int y, int w, int h,
     const char *text,
     bool pressed,
-    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed),
+    void (*when_pressed)(),
     UI_Button_Group *button_group
 ) {
     UI_Node node = { 0 };

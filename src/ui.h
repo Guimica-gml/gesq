@@ -74,7 +74,7 @@ struct UI_Node_Button {
 
 struct UI_Node_Toggle_Button {
     const char *text;
-    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed);
+    void (*when_pressed)();
     UI_Button_State state;
     UI_Button_Group *button_group;
     Uint32 last_mouse_state;
@@ -125,7 +125,7 @@ UI_Node_Index ui_new_toggle_button(
     int x, int y, int w, int h,
     const char *text,
     bool pressed,
-    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed),
+    void (*when_pressed)(),
     UI_Button_Group *button_group
 );
 
