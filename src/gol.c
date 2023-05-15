@@ -3,7 +3,7 @@
 
 Gol_Board gol_board_new(size_t width, size_t height) {
     return (Gol_Board) {
-        .cells = malloc(width * height * sizeof(Gol_State)),
+        .cells = calloc(width * height, sizeof(Gol_State)),
         .width = width,
         .height = height,
     };
