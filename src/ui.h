@@ -10,6 +10,7 @@
 
 #define UI_NO_POS 0, 0, 0, 0
 #define UI_CONTAINER_CAP 64
+#define UI_BUTTON_GROUP_CAP 64
 
 typedef struct UI_Theme UI_Theme;
 typedef struct UI_Node_Container UI_Node_Container;
@@ -19,6 +20,7 @@ typedef struct UI_Node_Toggle_Button UI_Node_Toggle_Button;
 typedef union UI_Node_As UI_Node_As;
 typedef struct UI_Node UI_Node;
 typedef struct UI_Alloc UI_Alloc;
+typedef struct UI_Button_Group UI_Button_Group;
 typedef size_t UI_Node_Index;
 
 typedef enum UI_Orientation {
@@ -74,6 +76,7 @@ struct UI_Node_Toggle_Button {
     const char *text;
     void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed);
     UI_Button_State state;
+    UI_Button_Group *button_group;
     Uint32 last_mouse_state;
 };
 
@@ -92,6 +95,11 @@ struct UI_Node {
     int y;
     int w;
     int h;
+};
+
+struct UI_Button_Group {
+    UI_Node_Index buttons[UI_BUTTON_GROUP_CAP];
+    size_t size;
 };
 
 void ui_update_node(UI_Alloc *alloc, UI_Node_Index node_index);
@@ -117,7 +125,8 @@ UI_Node_Index ui_new_toggle_button(
     int x, int y, int w, int h,
     const char *text,
     bool pressed,
-    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed)
+    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed),
+    UI_Button_Group *button_group
 );
 
 #endif // UI_H_

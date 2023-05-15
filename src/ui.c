@@ -40,6 +40,17 @@ void ui_update_node(UI_Alloc *alloc, UI_Node_Index node_index) {
                     } else {
                         toggle_button->state = UI_BUTTON_PRESSED;
                     }
+                    if (toggle_button->button_group != NULL) {
+                        UI_Button_Group *button_group = toggle_button->button_group;
+                        for (size_t i = 0; i < button_group->size; ++i) {
+                            if (button_group->buttons[i] == node_index) {
+                                continue;
+                            }
+                            UI_Node *node = ui_alloc_get_node(alloc, button_group->buttons[i]);
+                            UI_Node_Toggle_Button *toggle_button = &node->as.toggle_button;
+                            toggle_button->state = UI_BUTTON_NORMAL;
+                        }
+                    }
                     if (toggle_button->when_pressed != NULL) {
                         toggle_button->when_pressed(toggle_button, toggle_button->state == UI_BUTTON_PRESSED);
                     }
@@ -235,7 +246,8 @@ UI_Node_Index ui_new_toggle_button(
     int x, int y, int w, int h,
     const char *text,
     bool pressed,
-    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed)
+    void (*when_pressed)(UI_Node_Toggle_Button *toggle_button, bool pressed),
+    UI_Button_Group *button_group
 ) {
     UI_Node node = { 0 };
     UI_Node_Toggle_Button toggle_button = { 0 };
@@ -246,6 +258,7 @@ UI_Node_Index ui_new_toggle_button(
     node.h = h;
     toggle_button.text = text;
     toggle_button.when_pressed = when_pressed;
+    toggle_button.button_group = button_group;
 
     if (pressed) {
         toggle_button.state = UI_BUTTON_PRESSED;
@@ -255,5 +268,12 @@ UI_Node_Index ui_new_toggle_button(
 
     node.kind = UI_NODE_TOGGLE_BUTTON;
     node.as.toggle_button = toggle_button;
-    return ui_alloc_node(alloc, node);
+    UI_Node_Index node_index = ui_alloc_node(alloc, node);
+
+    if (button_group != NULL) {
+        assert(button_group->size < UI_BUTTON_GROUP_CAP);
+        button_group->buttons[button_group->size++] = node_index;
+    }
+
+    return node_index;
 }

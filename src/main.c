@@ -73,31 +73,45 @@ void ui_clear_button_pressed(void) {
     gol_board_clear(&board);
 }
 
-void ui_pattern_none_button_pressed(void) {
+void ui_pattern_none_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_DEFAULT_W, PAT_DEFAULT_W, pattern_default);
 }
 
-void ui_pattern_glider_button_pressed(void) {
+void ui_pattern_glider_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_GLIDER_W, PAT_GLIDER_H, pattern_glider);
 }
 
-void ui_pattern_hammerhead_button_pressed(void) {
+void ui_pattern_hammerhead_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_HAMMERHEAD_W, PAT_HAMMERHEAD_H, pattern_hammerhead);
 }
 
-void ui_pattern_cloverleaf_button_pressed(void) {
+void ui_pattern_cloverleaf_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_CLOVERLEAF_W, PAT_CLOVERLEAF_H, pattern_cloverleaf);
 }
 
-void ui_pattern_light_spaceship_button_pressed(void) {
+void ui_pattern_light_spaceship_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_LIGHT_SPACESHIP_W, PAT_LIGHT_SPACESHIP_H, pattern_light_spaceship);
 }
 
-void ui_pattern_midlle_spaceship_button_pressed(void) {
+void ui_pattern_midlle_spaceship_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_MIDDLE_SPACESHIP_W, PAT_MIDDLE_SPACESHIP_H, pattern_middle_spaceship);
 }
 
-void ui_pattern_heavy_spaceship_button_pressed(void) {
+void ui_pattern_heavy_spaceship_button_pressed(UI_Node_Toggle_Button *toggle_button, bool pressed) {
+    (void) toggle_button;
+    (void) pressed;
     gol_board_resize(&pattern, PAT_HEAVY_SPACESHIP_W, PAT_HEAVY_SPACESHIP_H, pattern_heavy_spaceship);
 }
 
@@ -157,18 +171,19 @@ int main(void) {
         .color_pressed = (SDL_Color) { UI_COLOR_PRESSED },
     };
 
+    UI_Button_Group patterns_group = { 0 };
     UI_Node_Index ui_items[] = {
         ui_new_label(&ui_alloc, UI_NO_POS, "Patterns"),
-        ui_new_button(&ui_alloc, UI_NO_POS, "None", ui_pattern_none_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Glider", ui_pattern_glider_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Hammerhead", ui_pattern_hammerhead_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Cloverleaf", ui_pattern_cloverleaf_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Light Spaceship", ui_pattern_light_spaceship_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Midlle Spaceship", ui_pattern_midlle_spaceship_button_pressed),
-        ui_new_button(&ui_alloc, UI_NO_POS, "Heavy Spaceship", ui_pattern_heavy_spaceship_button_pressed),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "None", true, ui_pattern_none_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Glider", false, ui_pattern_glider_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Hammerhead", false, ui_pattern_hammerhead_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Cloverleaf", false, ui_pattern_cloverleaf_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Light Spaceship", false, ui_pattern_light_spaceship_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Midlle Spaceship", false, ui_pattern_midlle_spaceship_button_pressed, &patterns_group),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Heavy Spaceship", false, ui_pattern_heavy_spaceship_button_pressed, &patterns_group),
 
         ui_new_label(&ui_alloc, UI_NO_POS, "State"),
-        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Click to Resume", paused, ui_pause_button_pressed),
+        ui_new_toggle_button(&ui_alloc, UI_NO_POS, "Click to Resume", paused, ui_pause_button_pressed, NULL),
         ui_new_button(&ui_alloc, UI_NO_POS, "Advance State", ui_advance_button_pressed),
         ui_new_button(&ui_alloc, UI_NO_POS, "Clear", ui_clear_button_pressed),
     };
