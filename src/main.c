@@ -45,6 +45,8 @@
 
 #define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
 
+#define GOL_BOARD_DIM 25
+
 // State of the program
 Gol_Board board = { 0 };
 Gol_Pattern pattern = { 0 };
@@ -101,6 +103,7 @@ void ui_pattern_heavy_spaceship_button_pressed(void) {
 }
 
 int main(void) {
+    board = gol_board_new(GOL_BOARD_DIM, GOL_BOARD_DIM);
     gol_pattern_switch(&pattern, pattern_default, PAT_DEFAULT_W, PAT_DEFAULT_W);
 
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -205,7 +208,8 @@ int main(void) {
                                         continue;
                                     }
 
-                                    board.cells[by][bx] = !board.cells[by][bx];
+                                    size_t index = by * board.width + bx;
+                                    board.cells[index] = !board.cells[index];
                                 }
                             }
                         }
@@ -266,7 +270,7 @@ int main(void) {
         SDL_SetRenderDrawColor(renderer, COLOR_ALIVE);
         for (size_t y = 0; y < GOL_BOARD_DIM; ++y) {
             for (size_t x = 0; x < GOL_BOARD_DIM; ++x) {
-                if (board.cells[y][x] == STATE_DEAD) {
+                if (board.cells[y * board.width + x] == STATE_DEAD) {
                     continue;
                 }
 
@@ -298,7 +302,9 @@ int main(void) {
     SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+
     ui_alloc_free(&ui_alloc);
+    gol_board_free(&board);
     free(pattern.cells);
 
     return 0;
