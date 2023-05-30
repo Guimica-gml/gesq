@@ -55,19 +55,21 @@ void gol_board_advance(Gol_Board *board) {
 }
 
 void gol_board_copy(Gol_Board *dst, size_t x, size_t y, Gol_Board *src) {
-    if (x < dst->width && y < dst->height) {
-        for (size_t py = 0; py < src->height; ++py) {
-            for (size_t px = 0; px < src->width; ++px) {
-                size_t bx = ((px + x - src->width / 2) + dst->width) % dst->width;
-                size_t by = ((py + y - src->height / 2) + dst->height) % dst->height;
+    if (x >= dst->width || y >= dst->height) {
+        return;
+    }
 
-                if (src->cells[py * src->width + px] == STATE_DEAD) {
-                    continue;
-                }
+    for (size_t py = 0; py < src->height; ++py) {
+        for (size_t px = 0; px < src->width; ++px) {
+            size_t bx = ((px + x - src->width / 2) + dst->width) % dst->width;
+            size_t by = ((py + y - src->height / 2) + dst->height) % dst->height;
 
-                size_t index = by * dst->width + bx;
-                dst->cells[index] = !dst->cells[index];
+            if (src->cells[py * src->width + px] == STATE_DEAD) {
+                continue;
             }
+
+            size_t index = by * dst->width + bx;
+            dst->cells[index] = !dst->cells[index];
         }
     }
 }
