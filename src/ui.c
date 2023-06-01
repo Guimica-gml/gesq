@@ -35,20 +35,22 @@ void ui_update_node(UI_Alloc *alloc, UI_Node_Index node_index) {
             UI_Node_Toggle_Button *toggle_button = &node->as.toggle_button;
             if (x > node->x && y > node->y && x < node->x + node->w && y < node->y + node->h) {
                 if ((button_state & SDL_BUTTON_LEFT) && ((toggle_button->last_mouse_state & SDL_BUTTON_LEFT) != 1)) {
-                    if (toggle_button->state == UI_BUTTON_PRESSED) {
-                        toggle_button->state = UI_BUTTON_SELECTED;
-                    } else {
-                        toggle_button->state = UI_BUTTON_PRESSED;
-                    }
                     if (toggle_button->button_group != NULL) {
                         UI_Button_Group *button_group = toggle_button->button_group;
                         for (size_t i = 0; i < button_group->size; ++i) {
                             if (button_group->buttons[i] == node_index) {
+                            toggle_button->state = UI_BUTTON_PRESSED;
                                 continue;
                             }
                             UI_Node *node = ui_alloc_get_node(alloc, button_group->buttons[i]);
                             UI_Node_Toggle_Button *toggle_button = &node->as.toggle_button;
                             toggle_button->state = UI_BUTTON_NORMAL;
+                        }
+                    } else {
+                        if (toggle_button->state == UI_BUTTON_PRESSED) {
+                            toggle_button->state = UI_BUTTON_SELECTED;
+                        } else {
+                            toggle_button->state = UI_BUTTON_PRESSED;
                         }
                     }
                     if (toggle_button->when_pressed != NULL) {
