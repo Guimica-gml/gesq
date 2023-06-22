@@ -11,7 +11,7 @@ nesq's game of life
 - When the game is paused you can click in a cell to toggle its state between alive and dead.
 
 ## Build and run
-You will need [SDL2](https://www.libsdl.org/) and [SDL2_ttf](https://github.com/libsdl-org/SDL_ttf) to build this code.
+You will need [raylib](https://www.raylib.com/) to build this code.
 
 ```console
 $ ./build.sh run

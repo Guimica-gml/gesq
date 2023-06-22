@@ -20,6 +20,7 @@ int gol_board_alive_neighbor_count(Gol_Board *board, size_t x, size_t y) {
 
             int nx = (x + dx + board->width) % board->width;
             int ny = (y + dy + board->height) % board->height;
+
             neighbor_count += board->cells[ny * board->width + nx];
         }
     }
