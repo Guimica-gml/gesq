@@ -17,7 +17,6 @@ typedef struct {
 Gol_Board gol_board_new(size_t width, size_t height);
 int gol_board_alive_neighbor_count(Gol_Board *board, size_t x, size_t y);
 void gol_board_advance(Gol_Board *board);
-void gol_board_resize(Gol_Board *board, size_t width, size_t height, Gol_State *cells);
 void gol_board_copy(Gol_Board *dst, size_t x, size_t y, Gol_Board *src);
 void gol_board_clear(Gol_Board *board);
 void gol_board_free(Gol_Board *board);

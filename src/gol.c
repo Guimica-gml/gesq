@@ -29,12 +29,18 @@ int gol_board_alive_neighbor_count(Gol_Board *board, size_t x, size_t y) {
 }
 
 void gol_board_advance(Gol_Board *board) {
-    Gol_Board board_copy = { 0 };
-    gol_board_resize(&board_copy, board->width, board->height, board->cells);
+    size_t copy_size = board->width * board->height * sizeof(Gol_State);
+
+    Gol_Board copy = {
+        .width = board->width,
+        .height = board->height,
+        .cells = malloc(copy_size),
+    };
+    memcpy(copy.cells, board->cells, copy_size);
 
     for (size_t y = 0; y < board->height; ++y) {
         for (size_t x = 0; x < board->width; ++x) {
-            int neighbor_count = gol_board_alive_neighbor_count(&board_copy, x, y);
+            int neighbor_count = gol_board_alive_neighbor_count(&copy, x, y);
             int index = y * board->width + x;
 
             switch (board->cells[index]) {
@@ -52,7 +58,7 @@ void gol_board_advance(Gol_Board *board) {
         }
     }
 
-    free(board_copy.cells);
+    free(copy.cells);
 }
 
 void gol_board_copy(Gol_Board *dst, size_t x, size_t y, Gol_Board *src) {
@@ -81,11 +87,4 @@ void gol_board_clear(Gol_Board *board) {
 
 void gol_board_free(Gol_Board *board) {
     free(board->cells);
-}
-
-void gol_board_resize(Gol_Board *board, size_t width, size_t height, Gol_State *cells) {
-    board->width = width;
-    board->height = height;
-    board->cells = realloc(board->cells, width * height * sizeof(Gol_State));
-    memcpy(board->cells, cells, width * height * sizeof(Gol_State));
 }
