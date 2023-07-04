@@ -20,7 +20,7 @@
 
 #define COLOR_TEXT (Color) { 0x36, 0x01, 0x3F, 0xFF }
 
-// milliseconds
+// in frames
 #define UPDATE_INTERVAL 15
 
 #define WINDOW_WIDTH 800
@@ -28,7 +28,7 @@
 
 #define BOARD_DIM 29
 
-#define ARRAY_LEN(arr) sizeof(arr) / sizeof((arr)[0])
+#define min(x, y) (((x) < (y)) ? (x) : (y))
 
 // State of the program
 Gol_Board board = { 0 };
@@ -45,10 +45,6 @@ void advance_button_pressed(void) {
 
 void clear_button_pressed(void) {
     gol_board_clear(&board);
-}
-
-float minf(float x1, float x2) {
-    return (x1 > x2) ? x2 : x1;
 }
 
 bool point_in_rect(Vector2 point, UI_Rect rect) {
@@ -132,7 +128,7 @@ int main(void) {
         float w = GetRenderWidth();
         float h = GetRenderHeight();
 
-        float board_size = minf(w, h);
+        float board_size = min(w, h);
         float cell_size = board_size / BOARD_DIM;
 
         Vector2 mouse_pos = GetMousePosition();
