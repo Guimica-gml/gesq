@@ -27,11 +27,19 @@ typedef struct {
 } UI_Rect;
 
 typedef struct {
+    int top;
+    int bottom;
+    int left;
+    int right;
+} UI_Margin;
+
+typedef struct {
     UI_Rect rect;
     UI_Orientation ori;
+    UI_Margin margin;
+    int gap;
     size_t capacity;
     size_t count;
-    int margin;
 } UI_Layout;
 
 typedef struct {
@@ -43,9 +51,12 @@ typedef struct {
 UI_Stack ui_stack_new(void);
 void ui_stack_free(UI_Stack *stack);
 
-void ui_layout_begin(UI_Stack *stack, UI_Rect rect, UI_Orientation ori, size_t cap, int margin);
+void ui_layout_begin(UI_Stack *stack, UI_Rect rect, UI_Orientation ori, UI_Margin margin, int gap, size_t cap);
 void ui_layout_end(UI_Stack *stack);
 
 UI_Rect ui_layout_rect(UI_Stack *stack);
+
+UI_Margin ui_margin(int top, int bottom, int left, int right);
+UI_Margin ui_marginv(int v);
 
 #endif // UI_H_

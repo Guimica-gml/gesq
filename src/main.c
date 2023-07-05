@@ -32,7 +32,7 @@
 
 // State of the program
 Gol_Board board = { 0 };
-Gol_Board pattern = { 0 };
+Gol_Board pattern = pattern_default;
 
 bool paused = true;
 double update_timer = UPDATE_INTERVAL;
@@ -113,7 +113,6 @@ void widget_toggle_button(UI_Rect rect, Font font, const char *text, bool *toggl
 
 int main(void) {
     board = gol_board_new(BOARD_DIM, BOARD_DIM);
-    pattern = pattern_default;
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "gesq - nesq's game of life");
@@ -131,10 +130,10 @@ int main(void) {
         float board_size = min(w, h);
         float cell_size = board_size / BOARD_DIM;
 
-        Vector2 mouse_pos = GetMousePosition();
+        Vector2 mouse = GetMousePosition();
 
-        size_t cell_x = mouse_pos.x / cell_size;
-        size_t cell_y = mouse_pos.y / cell_size;
+        size_t cell_x = mouse.x / cell_size;
+        size_t cell_y = mouse.y / cell_size;
 
         if (paused && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             gol_board_copy(&board, cell_x, cell_y, &pattern);
@@ -199,10 +198,9 @@ int main(void) {
         }
 
         UI_Rect rect = { board_size, 0, w - board_size, h + 1 };
-        int margin = 5;
         float font_size = 35.0;
 
-        ui_layout_begin(&ui_stack, rect, UI_VERT, 12, margin);
+        ui_layout_begin(&ui_stack, rect, UI_VERT, ui_marginv(5), 5, 12);
 
         widget_label(ui_layout_rect(&ui_stack), font, "Patterns", font_size);
         widget_pattern_button(ui_layout_rect(&ui_stack), font, "None", pattern_default);
