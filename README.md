@@ -16,11 +16,23 @@ nesq's game of life
 
 - Add an option to save/load custom patterns.
 
-## Build and run
+## How to build
 
-You will need [raylib](https://www.raylib.com/) to build this code.
+This project uses the [nob](https://github.com/tsoding/nob.h) build system.
+
+To boostrap the build system:
 
 ```console
-$ ./build.sh
-$ ./gesq
+$ cc -o nob nob.c
 ```
+
+After that any subsequent build may be done by running:
+
+```consonle
+$ ./nob
+```
+
+Nob is smart and will recompile itself when you modify its source code.
+
+Any transitional files used during build will be placed in the `.build` directory.
+The `gesq` executable will be placed in the root directory of the repository.
