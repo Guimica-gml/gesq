@@ -2,6 +2,9 @@
 
 nesq's game of life
 
+> [!NOTE]  
+> gesq development has been moved to [codeberg repo](https://codeberg.org/c_nicnic/gesq).
+
 ![gesq-example](https://user-images.githubusercontent.com/66211581/232922366-08d6457e-9174-4d87-bd87-82951ff856fa.gif)
 
 ## How to use
